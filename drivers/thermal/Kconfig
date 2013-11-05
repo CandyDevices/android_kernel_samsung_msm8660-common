@@ -77,6 +77,16 @@ config THERMAL_PM8XXX
 	  shifting over temperature shutdown control of the PMIC from hardware
 	  to software.
 
+config BRICKED_THERMAL
+	tristate "Bricked Thermal Monitor"
+        depends on THERMAL_TSENS8X60 || THERMAL_TSENS8960
+	depends on CPU_FREQ_MSM
+	default n
+	help
+	  This enables thermal monitoring capability in the kernel.
+	  Monitors TSENS temperature and limits the max frequency of the cores.
+	  This replaces the qcom msm_thermal when defined!
+
 config THERMAL_MONITOR
 	bool "Monitor thermal state and limit CPU Frequency"
 	depends on THERMAL_TSENS8X60 || THERMAL_TSENS8960
