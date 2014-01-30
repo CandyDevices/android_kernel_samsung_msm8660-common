@@ -104,10 +104,13 @@ source "drivers/staging/iio/Kconfig"
 
 source "drivers/staging/cs5535_gpio/Kconfig"
 
+<<<<<<< HEAD
 source "drivers/staging/snappy/Kconfig"
 
 source "drivers/staging/zram/Kconfig"
 
+=======
+>>>>>>> 53e0a36... zram: promote zram from staging
 source "drivers/staging/zcache/Kconfig"
 
 source "drivers/staging/zsmalloc/Kconfig"
