@@ -33,7 +33,7 @@
 #include <linux/string.h>
 #include "tmem.h"
 
-#include "../zram/xvmalloc.h" /* if built in drivers/staging */
+#include <linux/zsmalloc.h>
 
 #if (!defined(CONFIG_CLEANCACHE) && !defined(CONFIG_FRONTSWAP))
 #error "zcache is useless without CONFIG_CLEANCACHE or CONFIG_FRONTSWAP"
