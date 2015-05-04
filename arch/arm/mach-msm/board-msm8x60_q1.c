@@ -13910,7 +13910,7 @@ static struct mmc_platform_data msm8x60_sdc5_data = {
 	.msmsdcc_fmin	= 400000,
 	.msmsdcc_fmid	= 24000000,
 	.msmsdcc_fmax	= 48000000,
-	.nonremovable	= 0,
+	.nonremovable	= 1,
 	.pclk_src_dfab  = 1,
 	.register_status_notify = sdc5_register_status_notify,
 #ifdef CONFIG_MSM_SDIO_AL
