@@ -130,3 +130,4 @@ ifeq (1, $(shell if [ -d ../../../../../../kernel/drivers/exfat ] ; then echo 1 
 obj-y                           += exfat/
 endif
 
+obj-$(CONFIG_KCONTROL_GPU_MODULE_MSM)   += gpu/
