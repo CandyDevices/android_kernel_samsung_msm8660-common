@@ -87,3 +87,12 @@ config BRCM_CCX
 	default n
 	---help---
 		Enable Cisco Compatible eXtenstion
+
+config DRIVER_TYPE
+	bool "Build BCMDHD into the kernel"
+	depends on MODULES
+	default n
+	---help---
+		This allows you to choose how to build bcmdhd
+		Saying y builds it into the kernel
+		Saying n builds it as a module
