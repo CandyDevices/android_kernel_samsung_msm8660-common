@@ -8351,6 +8351,23 @@ static struct platform_device msm_tsens_device = {
 	.id = -1,
 };
 #endif
+#ifdef CONFIG_BRICKED_THERMAL
+	.sensor_id = 0,
+        .poll_ms = 100,
+       .shutdown_temp = 88,
+
+        .allowed_max_high = 84,
+        .allowed_max_low = 80,
+        .allowed_max_freq = 384000,
+
+        .allowed_mid_high = 81,
+        .allowed_mid_low = 76,
+        .allowed_mid_freq = 810000,
+
+        .allowed_low_high = 79,
+        .allowed_low_low = 73,
+        .allowed_low_freq = 1350000,
+#endif
 
 #ifdef CONFIG_VP_A2220
 #ifdef CONFIG_USE_A2220_B
