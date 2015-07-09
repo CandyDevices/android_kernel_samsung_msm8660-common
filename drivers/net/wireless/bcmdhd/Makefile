@@ -87,17 +87,6 @@ DHDCFLAGS += -DWL_ENABLE_P2P_IF
 DHDCFLAGS += -DMULTIPLE_SUPPLICANT
 DHDCFLAGS += -DWL_CFG80211_STA_EVENT
 
-##########################
-# driver type
-# m: module type driver
-# y: built-in type driver
-##########################
-ifeq ($(CONFIG_DRIVER_TYPE),y)
-DRIVER_TYPE ?= y
-else
-DRIVER_TYPE ?= m
-endif
-
 #########################
 # Chip dependent feature
 #########################
@@ -240,7 +229,7 @@ DHDOFILES :=$(filter-out bcmsdh_sdmmc_linux.o,$(DHDOFILES))
 endif
 
 dhd-y := $(DHDOFILES)
-obj-$(DRIVER_TYPE)   += dhd.o
+obj-$(CONFIG_BCM4330)   += dhd.o
 
 all:
 	@echo "$(MAKE) --no-print-directory -C $(KDIR) SUBDIRS=$(CURDIR) modules"
