@@ -95,7 +95,11 @@ DHDCFLAGS += -DWL_CFG80211_STA_EVENT
 ifeq ($(CONFIG_DRIVER_TYPE),y)
 DRIVER_TYPE ?= y
 else
+ifeq ($(CONFIG_MODULES),y)
 DRIVER_TYPE ?= m
+else
+DRIVER_TYPE ?= y
+endif
 endif
 
 #########################
