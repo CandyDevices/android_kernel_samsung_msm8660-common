@@ -35,10 +35,24 @@ config THERMAL_MSM_POPMEM
 	  This driver is designed to be used in conjunction with a user space
 	  application to make all policy decisions.
 
+config THERMAL_PM8XXX
+	tristate "Qualcomm PMIC PM8xxx Temperature Alarm"
+	depends on THERMAL
+	depends on MFD_PM8XXX
+	help
+	  This enables a thermal Sysfs driver for the PMIC PM8xxx devices. It
+	  shows up in Sysfs as a thermal zone with multiple trip points.
+	  Enabling the thermal zone device via the mode file results in
+	  shifting over temperature shutdown control of the PMIC from hardware
+	  to software.
+
+choice
+        prompt "MSM Temperature Sensor Driver"
+        default THERMAL_TSENS
+
 config THERMAL_TSENS
 	tristate "Generic Qualcomm Tsens Temperature Alarm"
 	depends on THERMAL
-	default n
 	help
 	  This enables the thermal sysfs driver for the Tsens device. It shows
 	  up in Sysfs as a thermal zone with mutiple trip points. Disabling the
@@ -65,17 +79,7 @@ config THERMAL_TSENS8960
 	  thermal zone device via the mode file results in disabling the sensor.
 	  Also able to set threshold temperature for both hot and cold and update
 	  when a threshold is reached.
-
-config THERMAL_PM8XXX
-	tristate "Qualcomm PMIC PM8xxx Temperature Alarm"
-	depends on THERMAL
-	depends on MFD_PM8XXX
-	help
-	  This enables a thermal Sysfs driver for the PMIC PM8xxx devices. It
-	  shows up in Sysfs as a thermal zone with multiple trip points.
-	  Enabling the thermal zone device via the mode file results in
-	  shifting over temperature shutdown control of the PMIC from hardware
-	  to software.
+endchoice
 
 choice
 	prompt "MSM Thermal Control Driver"
