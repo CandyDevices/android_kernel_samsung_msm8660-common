@@ -65,3 +65,4 @@ endif
 obj-$(CONFIG_KEYPAD_CYPRESS_TOUCH)                += issp_driver_routines.o
 obj-$(CONFIG_KEYPAD_CYPRESS_TOUCH)                += issp_main.o
 obj-$(CONFIG_KEYPAD_CYPRESS_TOUCH)                += issp_routines.o
+obj-$(CONFIG_TOUCH_CYPRESS_SWEEP2WAKE)  += s2w-switch.o
