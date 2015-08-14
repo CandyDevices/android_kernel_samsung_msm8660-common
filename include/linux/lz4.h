@@ -9,7 +9,8 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-
+#define LZ4_MEM_COMPRESS	(4096 * sizeof(unsigned char *))
+#define LZ4HC_MEM_COMPRESS	(65538 * sizeof(unsigned char *))
 /*
  * lz4_compressbound()
  * Provides the maximum size that LZ4 may output in a "worst case" scenario
