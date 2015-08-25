@@ -74,6 +74,8 @@ int ubi_check_volume(struct ubi_device *ubi, int vol_id)
 	for (i = 0; i < vol->used_ebs; i++) {
 		int size;
 
+		cond_resched();
+
 		if (i == vol->used_ebs - 1)
 			size = vol->last_eb_bytes;
 		else
@@ -81,7 +83,7 @@ int ubi_check_volume(struct ubi_device *ubi, int vol_id)
 
 		err = ubi_eba_read_leb(ubi, vol, i, buf, 0, size, 1);
 		if (err) {
-			if (err == -EBADMSG)
+			if (mtd_is_eccerr(err))
 				err = 1;
 			break;
 		}
