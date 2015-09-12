@@ -43,6 +43,7 @@ EXPORT_SYMBOL_GPL(bricked_thermal_throttled);
 static int pre_throttled_max = 0;
 
 static struct msm_thermal_tuners {
+    uint32_t temp;
     uint32_t sensor_id;
     uint32_t poll_ms;
     uint32_t shutdown_temp;
@@ -59,6 +60,7 @@ static struct msm_thermal_tuners {
     uint32_t allowed_low_low;
     uint32_t allowed_low_freq;
 } msm_thermal_tuners_ins = {
+    .temp = 0,
     .sensor_id = 0,
     .poll_ms = 150,
     .shutdown_temp = 80,
@@ -170,25 +172,24 @@ static void check_temp(struct work_struct *work)
 {
     struct cpufreq_policy *cpu_policy = NULL;
     struct tsens_device tsens_dev;
-    unsigned long temp = 0;
     uint32_t max_freq = 0;
     bool update_policy = false;
     int i = 0, cpu = 0, ret = 0;
 
     tsens_dev.sensor_num = msm_thermal_tuners_ins.sensor_id;
-    ret = tsens_get_temp(&tsens_dev, &temp);
+    ret = tsens_get_temp(&tsens_dev, &msm_thermal_tuners_ins.temp);
     if (ret) {
         pr_err(THERMAL_TAG"FATAL: Unable to read TSENS sensor %d\n",
                tsens_dev.sensor_num);
         goto reschedule;
     }
 
-    if (temp >= msm_thermal_tuners_ins.shutdown_temp) {
+    if (msm_thermal_tuners_ins.temp >= msm_thermal_tuners_ins.shutdown_temp) {
         mutex_lock(&emergency_shutdown_mutex);
         pr_warn("################################\n");
         pr_warn("################################\n");
         pr_warn("- %u OVERTEMP! SHUTTING DOWN! -\n", msm_thermal_tuners_ins.shutdown_temp);
-        pr_warn("- cur temp:%lu measured by:%u -\n", temp, msm_thermal_tuners_ins.sensor_id);
+        pr_warn("- cur temp:%lu measured by:%u -\n", msm_thermal_tuners_ins.temp, msm_thermal_tuners_ins.sensor_id);
         pr_warn("################################\n");
         pr_warn("################################\n");
         /* orderly poweroff tries to power down gracefully
@@ -199,7 +200,7 @@ static void check_temp(struct work_struct *work)
             max_freq = msm_thermal_tuners_ins.allowed_max_freq;
             bricked_thermal_throttled = 3;
             pr_warn(THERMAL_TAG"Emergency throttled CPU%i to %u! temp:%lu\n",
-                    cpu, msm_thermal_tuners_ins.allowed_max_freq, temp);
+                    cpu, msm_thermal_tuners_ins.allowed_max_freq, msm_thermal_tuners_ins.temp);
         }
         mutex_unlock(&emergency_shutdown_mutex);
     }
@@ -217,18 +218,18 @@ static void check_temp(struct work_struct *work)
             pre_throttled_max = cpu_policy->max;
 
         //low trip point
-        if ((temp >= msm_thermal_tuners_ins.allowed_low_high) &&
-            (temp < msm_thermal_tuners_ins.allowed_mid_high) &&
+        if ((msm_thermal_tuners_ins.temp >= msm_thermal_tuners_ins.allowed_low_high) &&
+            (msm_thermal_tuners_ins.temp < msm_thermal_tuners_ins.allowed_mid_high) &&
             (bricked_thermal_throttled < 1)) {
             update_policy = true;
             max_freq = msm_thermal_tuners_ins.allowed_low_freq;
             if (cpu == (CONFIG_NR_CPUS-1)) {
                 bricked_thermal_throttled = 1;
                 pr_warn(THERMAL_TAG"Thermal Throttled (low)! temp:%lu by:%u\n",
-                        temp, msm_thermal_tuners_ins.sensor_id);
+                        msm_thermal_tuners_ins.temp, msm_thermal_tuners_ins.sensor_id);
             }
         //low clr point
-        } else if ((temp < msm_thermal_tuners_ins.allowed_low_low) &&
+        } else if ((msm_thermal_tuners_ins.temp < msm_thermal_tuners_ins.allowed_low_low) &&
                (bricked_thermal_throttled > 0)) {
             if (pre_throttled_max != 0)
                 max_freq = pre_throttled_max;
@@ -245,7 +246,7 @@ static void check_temp(struct work_struct *work)
             if (cpu == (CONFIG_NR_CPUS-1)) {
                 bricked_thermal_throttled = 0;
                 pr_warn(THERMAL_TAG"Low thermal throttle ended! temp:%lu by:%u\n",
-                        temp, msm_thermal_tuners_ins.sensor_id);
+                        msm_thermal_tuners_ins.temp, msm_thermal_tuners_ins.sensor_id);
             }
 
 #ifdef CONFIG_MSM_MPDEC_INPUTBOOST_CPUMIN
@@ -259,44 +260,44 @@ static void check_temp(struct work_struct *work)
 #endif
 
         //mid trip point
-        } else if ((temp >= msm_thermal_tuners_ins.allowed_mid_high) &&
-               (temp < msm_thermal_tuners_ins.allowed_max_high) &&
+        } else if ((msm_thermal_tuners_ins.temp >= msm_thermal_tuners_ins.allowed_mid_high) &&
+               (msm_thermal_tuners_ins.temp < msm_thermal_tuners_ins.allowed_max_high) &&
                (bricked_thermal_throttled < 2)) {
             update_policy = true;
             max_freq = msm_thermal_tuners_ins.allowed_mid_freq;
             if (cpu == (CONFIG_NR_CPUS-1)) {
                 bricked_thermal_throttled = 2;
                 pr_warn(THERMAL_TAG"Thermal Throttled (mid)! temp:%lu by:%u\n",
-                        temp, msm_thermal_tuners_ins.sensor_id);
+                        msm_thermal_tuners_ins.temp, msm_thermal_tuners_ins.sensor_id);
             }
         //mid clr point
-        } else if ((temp < msm_thermal_tuners_ins.allowed_mid_low) &&
+        } else if ((msm_thermal_tuners_ins.temp < msm_thermal_tuners_ins.allowed_mid_low) &&
                (bricked_thermal_throttled > 1)) {
             max_freq = msm_thermal_tuners_ins.allowed_low_freq;
             update_policy = true;
             if (cpu == (CONFIG_NR_CPUS-1)) {
                 bricked_thermal_throttled = 1;
                 pr_warn(THERMAL_TAG"Mid thermal throttle ended! temp:%lu by:%u\n",
-                        temp, msm_thermal_tuners_ins.sensor_id);
+                        msm_thermal_tuners_ins.temp, msm_thermal_tuners_ins.sensor_id);
             }
         //max trip point
-        } else if (temp >= msm_thermal_tuners_ins.allowed_max_high) {
+        } else if (msm_thermal_tuners_ins.temp >= msm_thermal_tuners_ins.allowed_max_high) {
             update_policy = true;
             max_freq = msm_thermal_tuners_ins.allowed_max_freq;
             if (cpu == (CONFIG_NR_CPUS-1)) {
                 bricked_thermal_throttled = 3;
                 pr_warn(THERMAL_TAG"Thermal Throttled (max)! temp:%lu by:%u\n",
-                        temp, msm_thermal_tuners_ins.sensor_id);
+                        msm_thermal_tuners_ins.temp, msm_thermal_tuners_ins.sensor_id);
             }
         //max clr point
-        } else if ((temp < msm_thermal_tuners_ins.allowed_max_low) &&
+        } else if ((msm_thermal_tuners_ins.temp < msm_thermal_tuners_ins.allowed_max_low) &&
                (bricked_thermal_throttled > 2)) {
             max_freq = msm_thermal_tuners_ins.allowed_mid_freq;
             update_policy = true;
             if (cpu == (CONFIG_NR_CPUS-1)) {
                 bricked_thermal_throttled = 2;
                 pr_warn(THERMAL_TAG"Max thermal throttle ended! temp:%lu by:%u\n",
-                        temp, msm_thermal_tuners_ins.sensor_id);
+                        msm_thermal_tuners_ins.temp, msm_thermal_tuners_ins.sensor_id);
             }
         }
         update_stats();
@@ -384,6 +385,7 @@ static ssize_t show_##file_name                                 \
     return sprintf(buf, "%u\n", msm_thermal_tuners_ins.object);       \
 }
 
+show_one(temp, temp);
 show_one(shutdown_temp, shutdown_temp);
 show_one(allowed_max_high, allowed_max_high);
 show_one(allowed_max_low, allowed_max_low);
@@ -395,6 +397,20 @@ show_one(allowed_low_high, allowed_low_high);
 show_one(allowed_low_low, allowed_low_low);
 show_one(allowed_low_freq, allowed_low_freq);
 show_one(poll_ms, poll_ms);
+
+static ssize_t store_temp(struct kobject *a, struct attribute *b,
+                                   const char *buf, size_t count)
+{
+    unsigned int input;
+    int ret;
+    ret = sscanf(buf, "%u", &input);
+    if (ret != 1)
+        return -EINVAL;
+
+    msm_thermal_tuners_ins.temp = input;
+
+    return count;
+}
 
 static ssize_t store_shutdown_temp(struct kobject *a, struct attribute *b,
                                    const char *buf, size_t count)
@@ -550,6 +566,7 @@ static ssize_t store_poll_ms(struct kobject *a, struct attribute *b,
     return count;
 }
 
+define_one_global_ro(temp);
 define_one_global_rw(shutdown_temp);
 define_one_global_rw(allowed_max_high);
 define_one_global_rw(allowed_max_low);
@@ -563,6 +580,7 @@ define_one_global_rw(allowed_low_freq);
 define_one_global_rw(poll_ms);
 
 static struct attribute *msm_thermal_attributes[] = {
+    &temp.attr,
     &shutdown_temp.attr,
     &allowed_max_high.attr,
     &allowed_max_low.attr,
