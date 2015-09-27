@@ -99,27 +99,6 @@ defined (CONFIG_ARCH_MSM8610) || defined (CONFIG_ARCH_MSM8228)
 
 static unsigned int nr_fshift = NR_FSHIFT;
 
-static unsigned int nr_run_thresholds_balance[] = {
-	(THREAD_CAPACITY * 625 * MULT_FACTOR) / DIV_FACTOR,
-	(THREAD_CAPACITY * 875 * MULT_FACTOR) / DIV_FACTOR,
-	(THREAD_CAPACITY * 1125 * MULT_FACTOR) / DIV_FACTOR,
-	UINT_MAX
-};
-
-static unsigned int nr_run_thresholds_performance[] = {
-	(THREAD_CAPACITY * 380 * MULT_FACTOR) / DIV_FACTOR,
-	(THREAD_CAPACITY * 625 * MULT_FACTOR) / DIV_FACTOR,
-	(THREAD_CAPACITY * 875 * MULT_FACTOR) / DIV_FACTOR,
-	UINT_MAX
-};
-
-static unsigned int nr_run_thresholds_conservative[] = {
-	(THREAD_CAPACITY * 875 * MULT_FACTOR) / DIV_FACTOR,
-	(THREAD_CAPACITY * 1625 * MULT_FACTOR) / DIV_FACTOR,
-	(THREAD_CAPACITY * 2125 * MULT_FACTOR) / DIV_FACTOR,
-	UINT_MAX
-};
-
 static unsigned int nr_run_thresholds_eco[] = {
         (THREAD_CAPACITY * 380 * MULT_FACTOR) / DIV_FACTOR,
 	UINT_MAX
@@ -135,9 +114,6 @@ static unsigned int nr_run_thresholds_disable[] = {
 };
 
 static unsigned int *nr_run_profiles[] = {
-	nr_run_thresholds_balance,
-	nr_run_thresholds_performance,
-	nr_run_thresholds_conservative,
 	nr_run_thresholds_eco,
 	nr_run_thresholds_eco_extreme,
 	nr_run_thresholds_disable,
