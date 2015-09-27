@@ -99,6 +99,11 @@ defined (CONFIG_ARCH_MSM8610) || defined (CONFIG_ARCH_MSM8228)
 
 static unsigned int nr_fshift = NR_FSHIFT;
 
+static unsigned int nr_run_thresholds_eco_insanity[] = {
+        (THREAD_CAPACITY * 340 * MULT_FACTOR) / DIV_FACTOR,
+        UINT_MAX
+};
+
 static unsigned int nr_run_thresholds_eco[] = {
         (THREAD_CAPACITY * 380 * MULT_FACTOR) / DIV_FACTOR,
 	UINT_MAX
@@ -114,6 +119,7 @@ static unsigned int nr_run_thresholds_disable[] = {
 };
 
 static unsigned int *nr_run_profiles[] = {
+	nr_run_thresholds_eco_insanity,
 	nr_run_thresholds_eco,
 	nr_run_thresholds_eco_extreme,
 	nr_run_thresholds_disable,
