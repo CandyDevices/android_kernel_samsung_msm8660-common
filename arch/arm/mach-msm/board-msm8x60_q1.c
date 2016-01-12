@@ -13841,7 +13841,7 @@ static void mipi_S6E8AA0_panel_reset_down(void)
 
 #define S6E8AA0_DEFAULT_VOLTAGE 3100000
 
-static int panel_uv = 600;
+static int panel_uv = 0;
 module_param(panel_uv, int, 0664);
 
 int mipi_S6E8AA0_panel_power(int enable)
@@ -13850,7 +13850,7 @@ int mipi_S6E8AA0_panel_power(int enable)
     static struct regulator *l17 = NULL;
     static struct regulator *l3 = NULL;	 
     static struct regulator *l12 = NULL;
-    int ret;
+    int ret = 0;
     static int panel_voltage = S6E8AA0_DEFAULT_VOLTAGE;
 
 #if defined (CONFIG_KOR_SHV_E120L_HD720)    
