@@ -3648,6 +3648,7 @@ static int configure_uart_gpios(int on)
 			msm_gpiomux_put(uart_gpios[i]);
 	return ret;
 }
+
 static struct msm_serial_hs_platform_data msm_uart_dm1_pdata = {
        .inject_rx_on_wakeup = 1,
        .rx_to_inject = 0xFD,
